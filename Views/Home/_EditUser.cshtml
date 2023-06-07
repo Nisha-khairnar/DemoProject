@@ -1,0 +1,74 @@
+@model DemoProject.Models.Users.User
+@using (Html.BeginForm("AddUser", "Home", FormMethod.Post, new { id = "fmAddUser", enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model=>model.Id)
+    <p>
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    </p>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title"><span id="sptitle">Edit User Details</span></h4>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Name :</label>
+                        @Html.TextBoxFor(model => model.Name, new { @class = "form-control", @maxlength = "255", @placeholder = "Enter Name" })
+                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Email ID :</label>
+                        @Html.TextBoxFor(model => model.EmailId, new { @class = "form-control", @maxlength = "255", @placeholder = "Enter Email Address" })
+                        @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label>Phone Number :</label>
+                        @Html.TextBoxFor(model => model.Phone, new { @class = "form-control", @placeholder = "Enter Phone Number",})
+                        @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label>Address :</label>
+                        @Html.TextBoxFor(model => model.Address, new { @class = "form-control", @placeholder = "Enter Address",})
+                    </div>
+                </div>
+            </div>
+             <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>State :</label>
+                        @Html.DropDownListFor(model => model.StateId, new SelectList(ViewBag.States, "StateId", "StateName"), "Select State", new { @class = "form-control",@onchange="PopulateDropDown();"})
+                        @Html.ValidationMessageFor(model => model.StateId, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>City :</label>
+                        @Html.DropDownListFor(model => model.CityId, new SelectList(ViewBag.Cities, "CityId", "CityName"), "Select City", new { @class = "form-control"})
+                        @Html.ValidationMessageFor(model => model.CityId, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer" align="right">
+            <div>
+                <button class="btn btn-sm btn-success" type="submit">Edit</button>
+                <button class="btn btn-sm btn-danger" data-bs-dismiss="modal" id="btncancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+}
+<script src="~/js/jquery.validate.js"></script>
+<script src="~/js/jquery.validate.unobtrusive.js"></script>

@@ -1,0 +1,131 @@
+﻿@model List<DemoProject.Models.Users.User>;
+@{
+    ViewData["Title"] = "Home Page";
+}
+<style>
+    .btn-add{
+        margin-bottom: 10px;
+        float: right;
+    }
+</style>
+<div class="container">
+    <button type="button" onclick="OpenAddNewPopup();" class="btn btn-success btn-add">Add User</button>
+    <table id="example" class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th style="width: 15%;">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Count > 0 && Model != null)
+            {
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <tr>
+                        <td>@Model[i].Name</td>
+                        <td>@Model[i].EmailId</td>
+                        <td>@Model[i].Phone</td>
+                        <td>
+                            <button type="button" class="btn btn-success" onclick="OpenEditNewPopup(@Model[i].Id)">Edit</button>
+                            <button type="button" class="btn btn-danger" onclick="DeleteUser(@Model[i].Id)">Delete</button>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                 <tr><td colspan="4" align="center">No records found.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>
+<div class="modal fade" id="AddUserModel" tabindex="-1" role="dialog"
+    aria-labelledby="mySmallModalLabel" data-backdrop="static"
+    data-keyboard="false">
+    <div class="modal-dialog modal-md" role="document" id="AddUser">
+
+    </div>
+</div>
+<div class="modal fade" id="EditUserModel" tabindex="-1" role="dialog"
+    aria-labelledby="mySmallModalLabel" data-backdrop="static"
+    data-keyboard="false">
+    <div class="modal-dialog modal-md" role="document" id="EditUser">
+
+    </div>
+</div>
+<script type="text/javascript">
+    function OpenAddNewPopup()
+    {
+        var url = '@Url.Action("_AddUser", "Home")';
+        $('#AddUser').load(url, function () {
+            $('#AddUserModel').modal('show');
+        });
+    }
+    function OpenEditNewPopup(Id)
+    {
+        
+        var url = '@Url.Action("_EditUser", "Home", new { Id = "REPLACEME" })';
+        url = url.replace("REPLACEME", Id);
+        $('#EditUser').load(url, function () {
+            $('#EditUserModel').modal('show');
+        });
+    }
+    function DeleteUser(Id) {
+        
+        swal({
+            title: "Are you sure?",
+            text: "You will not be able to recover this user!",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        },function () {
+            var url = '@Url.Action("DeleteUser", "Home", new { Id = "REPLACEME" })';
+            url = url.replace("REPLACEME", Id);
+            $.ajax({
+                url: url,
+                type: "POST",
+                processData: false,
+                success: function (data) {
+                    
+                    location.reload();
+                },
+                error: function (reponse) {
+                    swal("Error!", "Error occured, Please try again.", "error");
+                }
+            });
+
+        });
+    }
+    function PopulateDropDown ()
+    {
+        var Id = $("#StateId").val();
+        var url = '@Url.Action("GetAllCitiesByState", "Home")';
+         $.ajax({
+                url: url,
+                cache: false,
+                type: "POST",
+                data: { Id: Id},
+                success: function (data) {
+                    
+                    var Filtervalue = data.citiesList;
+                    if (Filtervalue != null) { 
+                            $("#CityId").html("<option value='' selected=''>Select City</option>");
+                            for (var i = 0; i < Filtervalue.length; i++) {
+                                $("#CityId").append(
+                                    $('<option></option>').val(Filtervalue[i].cityId).html(Filtervalue[i].cityName));
+                            }
+                        } else {
+                            $("#CityId").html("<option value='' selected=''>Select City</option>");
+                        }                
+                }, 
+                error: function (reponse) {
+                    alert("Error! Please Try Again");
+                }
+        });
+    }
+</script>
